@@ -1,0 +1,4 @@
+#不上傳venv跟build、prcache資料夾
+venv/
+build/
+__pycache__/

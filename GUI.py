@@ -1,6 +1,8 @@
 import sys
+import matplotlib.pyplot as plt
+import numpy as np
 from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal,QTimer
 from contextlib import contextmanager
 from state2PC import collect_thread_info
 from transfer import transfer
@@ -8,6 +10,11 @@ from shutil import copyfile
 from SJF_Gantt import generate_sjf_and_pcb
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
+from simulation_process import ProcessScheduler
+from process_state import SJFSimulation
+import pandas as pd
+from HW3 import fcfs_scheduling_with_gantt, spn_scheduling_with_gantt, srt_scheduling_with_gantt
+
 
 
 
@@ -17,6 +24,7 @@ from PyQt5.QtCore import Qt
 def redirect_stdout(new_target):
     old_stdout = sys.stdout
     sys.stdout = new_target
+    
     try:
         yield new_target
     finally:
@@ -26,6 +34,7 @@ def redirect_stdout(new_target):
 class WorkerThread(QThread):
     update_text = pyqtSignal(str)
     update_status = pyqtSignal(dict)
+    finished_signal = pyqtSignal()
 
     def __init__(self, function_to_run, *args):
         super().__init__()
@@ -36,7 +45,16 @@ class WorkerThread(QThread):
         # 使用重定向的上下文管理器
         with redirect_stdout(self):
             self.function_to_run(self.update_process_status, *self.args)
+        simulation = SJFSimulation('test_value_IO.csv')
+        simulation.simulate()
 
+        # 執行更新過程
+        scheduler = ProcessScheduler()
+        scheduler.run_simulation_update()
+
+        # 發送完成信號
+        self.finished_signal.emit()
+        
     # 重写 write 方法以发送文本到 GUI
     def write(self, text):
         self.update_text.emit(text)
@@ -73,6 +91,34 @@ class MainWindow(QtWidgets.QMainWindow):
         self.thread = WorkerThread(self.run_functions)  # 假设这是您启动线程的方式
         self.thread.update_text.connect(self.textEdit.append)
         self.thread.update_status.connect(self.update_status_labels)
+
+        # 按鈕事件連接
+        self.button_generate_sjf_and_pcb = self.findChild(QtWidgets.QPushButton, 'Button_generate_sjf_and_pcb')
+        self.button_generate_sjf_and_pcb.clicked.connect(self.start_simulation_and_update)
+
+        self.button_start = self.findChild(QtWidgets.QPushButton, 'Button_Start')
+        self.button_start.clicked.connect(self.start_simulation_and_update)
+
+        self.timer = QTimer(self)  # 創建一個定時器
+        self.timer.timeout.connect(self.update_labels_from_csv)  # 定時器超時時調用更新標籤的方法
+        self.current_row = 0  # 追踪當前顯示的行數
+        self.df = pd.DataFrame()  # 存儲從CSV讀取的數據
+
+        # 获取所有标签
+        self.labels = {
+            'Time': self.findChild(QtWidgets.QLabel, 'label_Time'),
+            'New': self.findChild(QtWidgets.QLabel, 'label_New'),
+            'Ready': self.findChild(QtWidgets.QLabel, 'label_Ready'),
+            'Waiting': self.findChild(QtWidgets.QLabel, 'label_Waiting'),
+            'Running': self.findChild(QtWidgets.QLabel, 'label_Running'),
+            'Completed': self.findChild(QtWidgets.QLabel, 'label_Completed'),
+            'Ready Suspended': self.findChild(QtWidgets.QLabel, 'label_Ready_Suspended'),
+            'Waiting Suspended': self.findChild(QtWidgets.QLabel, 'label_Waiting_Suspended'),
+        }
+
+        # 将按钮的点击事件连接到 execute_scheduling_algorithms 方法
+        self.pushButton_HW3.clicked.connect(self.execute_scheduling_algorithms)
+
 
     def execute_collect_thread_info_and_transfer(self):
         # 运行 collect_thread_info 和 transfer 函数的线程
@@ -131,6 +177,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_status_labels(self, status):
         # 根据传入的状态字典更新标签
         # 假设状态字典包含了所有需要的信息
+        self.label_Time.setText(status.get('Time', ''))
         self.label_New.setText(status.get('New', ''))
         self.label_Ready.setText(status.get('Ready', ''))
         self.label_Waiting.setText(status.get('Waiting', ''))
@@ -139,7 +186,72 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_Ready_Suspended.setText(status.get('Ready_Suspended', ''))
         self.label_Waiting_Suspended.setText(status.get('Waiting_Suspended', ''))
 
+    def start_simulation_and_update(self):
+        self.thread = SimulationThread()
+        self.thread.finished_signal.connect(self.update_labels_from_csv)
+        self.thread.start()
+        self.df = pd.read_csv('updated_simulation_output.csv')  # 加載CSV數據
+        self.current_row = 0  # 重置行數
+        self.timer.start(500)  # 每1000毫秒（1秒）更新一次
 
+    def update_labels_from_csv(self):
+        if self.current_row < len(self.df):
+            row = self.df.iloc[self.current_row]
+            for key, label in self.labels.items():
+                label.setText(str(row.get(key, '')))
+            self.current_row += 1  # 移動到下一行
+        else:
+            self.timer.stop()  # 如果所有行都已顯示，則停止定時器
+
+    def execute_scheduling_algorithms(self):
+        csv_file_path = 'HW3.csv'  # 确保这是正确的CSV文件路径
+
+        # FCFS
+        try:
+            result_fcfs = fcfs_scheduling_with_gantt(csv_file_path, 'FCFS_Gantt.png')
+            self.label_FCFS.setText(f"FCFS: {result_fcfs:.2f}")
+            self.label_FCFS_image.setPixmap(QPixmap('FCFS_Gantt.png'))
+        except Exception as e:
+            print(f"FCFS error: {e}")
+
+        # RR
+        try:
+            #result_rr = rr_scheduling_with_gantt(csv_file_path, 'RR_Gantt.png')
+            
+            self.label_RR.setText('11.0')
+            self.label_RR_image.setPixmap(QPixmap('RR_Gantt.png'))
+        except Exception as e:
+            print(f"RR error: {e}")
+
+        # SPN
+        try:
+            result_spn = spn_scheduling_with_gantt(csv_file_path, 'SPN_Gantt.png')
+            self.label_SPN.setText(f"SPN: {result_spn:.2f}")
+            self.label_SPN_image.setPixmap(QPixmap('SPN_Gantt.png'))
+        except Exception as e:
+            print(f"SPN error: {e}")
+
+        # SRT
+        try:
+            result_srt = srt_scheduling_with_gantt(csv_file_path, 'SRT_Gantt.png')
+            self.label_SRT.setText(f"SRT: {result_srt:.2f}")
+            self.label_SRT_image.setPixmap(QPixmap('SRT_Gantt.png'))
+        except Exception as e:
+            print(f"SRT error: {e}")
+
+
+# 定义运行模拟和更新任务的线程类
+class SimulationThread(QThread):
+    finished_signal = pyqtSignal()
+
+    def run(self):
+        simulation = SJFSimulation('test_value_IO.csv')
+        simulation.simulate()
+
+        scheduler = ProcessScheduler()
+        scheduler.run_simulation_update()
+
+        self.finished_signal.emit()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

@@ -13,8 +13,8 @@ from PyQt5.QtCore import Qt
 from simulation_process import ProcessScheduler
 from process_state import SJFSimulation
 import pandas as pd
-from HW3 import fcfs_scheduling_with_gantt, spn_scheduling_with_gantt, srt_scheduling_with_gantt
-
+from HW3 import fcfs_scheduling_with_gantt,rr_scheduling_with_gantt, spn_scheduling_with_gantt, srt_scheduling_with_gantt
+from PyQt5.QtWidgets import  QLabel
 
 
 
@@ -217,8 +217,11 @@ class MainWindow(QtWidgets.QMainWindow):
         # RR
         try:
             #result_rr = rr_scheduling_with_gantt(csv_file_path, 'RR_Gantt.png')
-            
-            self.label_RR.setText('11.0')
+            rr_scheduling_with_gantt()
+            #將stupid_rr.txt的值寫入label_RR
+            with open('stupid_rr.txt', 'r') as f:
+                result_rr = f.read()
+            self.label_RR.setText(result_rr)
             self.label_RR_image.setPixmap(QPixmap('RR_Gantt.png'))
         except Exception as e:
             print(f"RR error: {e}")
@@ -238,6 +241,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self.label_SRT_image.setPixmap(QPixmap('SRT_Gantt.png'))
         except Exception as e:
             print(f"SRT error: {e}")
+
+        # 调整图表大小并显示
+        self.resize_and_display_charts()
+
+    def resize_and_display_charts(self):
+        # 图表文件名
+        chart_files = {
+            'FCFS_Gantt.png': self.findChild(QLabel, 'label_FCFS_image'),
+            'RR_Gantt.png': self.findChild(QLabel, 'label_RR_image'),
+            'SPN_Gantt.png': self.findChild(QLabel, 'label_SPN_image'),
+            'SRT_Gantt.png': self.findChild(QLabel, 'label_SRT_image'),
+        }
+
+        for file_name, label in chart_files.items():
+            pixmap = QPixmap(file_name)
+            # 调整图片大小为 500x290
+            scaled_pixmap = pixmap.scaled(500, 290, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            label.setPixmap(scaled_pixmap)
 
 
 # 定义运行模拟和更新任务的线程类

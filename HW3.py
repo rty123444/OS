@@ -50,7 +50,7 @@ def fcfs_scheduling_with_gantt(csv_file_path='HW3.csv', output_gantt='FCFS_Gantt
     return average_waiting_time
 
 def rr_scheduling_with_gantt(csv_file_path='HW3.csv', quantum=3, output_gantt='RR_Gantt.png'):
-    '''
+    
     processes = pd.read_csv(csv_file_path)
     processes['remaining_time'] = processes['burst_time']
     processes['start_time'] = -1  # 初始时刻未开始
@@ -84,8 +84,10 @@ def rr_scheduling_with_gantt(csv_file_path='HW3.csv', quantum=3, output_gantt='R
     plt.tight_layout()
     plt.savefig(output_gantt)
     print(f"RR Gantt chart saved as {output_gantt}. Average waiting time: {average_waiting_time:.2f}")
-    '''
-    return 1
+    
+    #將average_waiting_time寫入stupid_rr.txt
+    with open('stupid_rr.txt', 'w') as f:
+        f.write(str(average_waiting_time))
 
 
 
@@ -208,6 +210,6 @@ def srt_scheduling_with_gantt(csv_file_path='HW3.py', output_gantt='SRT_Gantt.pn
 #print(srt_scheduling_with_gantt(processes_data_df))
 
 #print(fcfs_scheduling_with_gantt('HW3.csv'))
-print(rr_scheduling_with_gantt('HW3.csv'))
+#print(rr_scheduling_with_gantt('HW3.csv'))
 #print(spn_scheduling_with_gantt('HW3.csv'))
 #print(srt_scheduling_with_gantt('HW3.csv'))

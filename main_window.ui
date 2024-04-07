@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -43,7 +43,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>PCB_Table</string>
+       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="label_SJF_Gantt">
@@ -56,7 +56,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>SJF_Gantt</string>
+       <string/>
       </property>
      </widget>
      <widget class="QTextEdit" name="textEdit">
@@ -155,7 +155,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>新建</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -201,7 +201,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>備妥/暫停</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -247,7 +247,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>備妥</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -293,7 +293,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>懸置/暫停</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -339,7 +339,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>懸置</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -385,7 +385,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>執行中</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -431,7 +431,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>離開</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -858,7 +858,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>Time</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -965,7 +965,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>FCFS</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -1011,7 +1011,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>RR(Q=3)</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -1149,7 +1149,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>SPN</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -1241,7 +1241,7 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string>SRT</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -1269,7 +1269,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>FCFS</string>
+       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="label_RR_image">
@@ -1285,7 +1285,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>RR</string>
+       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="label_SPN_image">
@@ -1301,7 +1301,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>SPN</string>
+       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="label_SRT_image">
@@ -1317,7 +1317,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>SRT</string>
+       <string/>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_HW3">

@@ -209,7 +209,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # FCFS
         try:
             result_fcfs = fcfs_scheduling_with_gantt(csv_file_path, 'FCFS_Gantt.png')
-            self.label_FCFS.setText(f"FCFS: {result_fcfs:.2f}")
+            self.label_FCFS.setText(f"{result_fcfs:.2f}")
             self.label_FCFS_image.setPixmap(QPixmap('FCFS_Gantt.png'))
         except Exception as e:
             print(f"FCFS error: {e}")
@@ -229,7 +229,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # SPN
         try:
             result_spn = spn_scheduling_with_gantt(csv_file_path, 'SPN_Gantt.png')
-            self.label_SPN.setText(f"SPN: {result_spn:.2f}")
+            self.label_SPN.setText(f"{result_spn:.2f}")
             self.label_SPN_image.setPixmap(QPixmap('SPN_Gantt.png'))
         except Exception as e:
             print(f"SPN error: {e}")
@@ -237,7 +237,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # SRT
         try:
             result_srt = srt_scheduling_with_gantt(csv_file_path, 'SRT_Gantt.png')
-            self.label_SRT.setText(f"SRT: {result_srt:.2f}")
+            self.label_SRT.setText(f"{result_srt:.2f}")
             self.label_SRT_image.setPixmap(QPixmap('SRT_Gantt.png'))
         except Exception as e:
             print(f"SRT error: {e}")

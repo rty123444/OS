@@ -44,7 +44,7 @@ class WorkerThread(QThread):
     def run(self):
         # 重新定向的上下文管理器
         with redirect_stdout(self):
-            self.function_to_run(self.update_process_status, *self.args)
+            self.function_to_run()
         simulation = SJFSimulation('test_value_IO.csv')
         simulation.simulate()
 

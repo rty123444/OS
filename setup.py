@@ -2,7 +2,7 @@ from setuptools import setup
 from Cython.Build import cythonize
 from distutils.core import Extension
 
-# 指定语言级别以避免FutureWarning
+# 指定語言
 extensions = [
     Extension("GetThreadContext", ["GetThreadContext.pyx"])
 ]

@@ -5,7 +5,7 @@ import pandas as pd
 
 def load_processes_data(csv_file_path='processes_data.csv'):
     """
-    从CSV文件加载进程数据。
+    從CSV加載數據
     """
     processes_data_df = pd.read_csv(csv_file_path)
     processes_data_df['burst_time'] = processes_data_df['burst_time'].astype(int)
@@ -13,9 +13,9 @@ def load_processes_data(csv_file_path='processes_data.csv'):
     return processes_data_df
 
 def fcfs_scheduling_with_gantt(csv_file_path='HW3.csv', output_gantt='FCFS_Gantt.png'):
-    # 从CSV文件加载进程数据
+    # 從CSV加載數據
     processes = pd.read_csv(csv_file_path)
-    # 确保数据类型是整型
+    # 改整數
     processes['burst_time'] = processes['burst_time'].astype(int)
     processes['arrival_time'] = processes['arrival_time'].astype(int)
     
@@ -45,7 +45,7 @@ def fcfs_scheduling_with_gantt(csv_file_path='HW3.csv', output_gantt='FCFS_Gantt
     plt.tight_layout()
     plt.legend()
     plt.savefig(output_gantt)
-    print(f"FCFS甘特图已保存为 {output_gantt}。")
+    print(f"FCFS甘特圖已保存為 {output_gantt}。")
 
     return average_waiting_time
 
@@ -53,7 +53,7 @@ def rr_scheduling_with_gantt(csv_file_path='HW3.csv', quantum=3, output_gantt='R
     
     processes = pd.read_csv(csv_file_path)
     processes['remaining_time'] = processes['burst_time']
-    processes['start_time'] = -1  # 初始时刻未开始
+    processes['start_time'] = -1  
     processes['completed'] = False
     time = 0
     total_waiting_time = 0
@@ -95,9 +95,9 @@ def spn_scheduling_with_gantt(csv_file_path='HW3.csv', output_gantt='SPN_Gantt.p
     '''
     
     '''
-    # 从CSV文件加载进程数据
+    # 從CSV加載數據
     processes = pd.read_csv(csv_file_path)
-    # 确保数据类型是整型
+    # 改整數
     processes['burst_time'] = processes['burst_time'].astype(int)
     processes['arrival_time'] = processes['arrival_time'].astype(int)
     
@@ -110,11 +110,11 @@ def spn_scheduling_with_gantt(csv_file_path='HW3.csv', output_gantt='SPN_Gantt.p
     processes['waiting_time'] = np.nan
 
     while processes_completed < len(processes):
-        # 过滤出已到达且未开始的进程
+        # 過濾出已到達且未開始執行的進程
         available_processes = processes[(processes['arrival_time'] <= current_time) & processes['start_time'].isna()]
         
         if not available_processes.empty:
-            # 选择最短执行时间的进程
+            # 選擇執行時間最短的進程
             next_process = available_processes.loc[available_processes['burst_time'].idxmin()]
             next_index = next_process.name
             start_time = max(current_time, processes.loc[next_index, 'arrival_time'])
@@ -123,10 +123,10 @@ def spn_scheduling_with_gantt(csv_file_path='HW3.csv', output_gantt='SPN_Gantt.p
             current_time = start_time + processes.loc[next_index, 'burst_time']
             processes_completed += 1
             
-            # 绘制进程的执行段到甘特图
+            # 繪製甘特圖
             plt.barh(processes.loc[next_index, 'PID'], processes.loc[next_index, 'burst_time'], left=processes.loc[next_index, 'start_time'], color=colors[next_index], edgecolor='black', label=f"PID {processes.loc[next_index, 'PID']}")
         else:
-            current_time += 1  # 如果没有进程可以执行，时间向前推进
+            current_time += 1  # 沒有進程可執行，時間前進一個時間單位
     
     total_waiting_time = processes['waiting_time'].sum()
     average_waiting_time = total_waiting_time / len(processes)
@@ -139,14 +139,14 @@ def spn_scheduling_with_gantt(csv_file_path='HW3.csv', output_gantt='SPN_Gantt.p
     plt.legend()
     plt.tight_layout()
     plt.savefig(output_gantt)
-    print(f"SPN甘特图已保存为 {output_gantt}。")
+    print(f"SPN甘特圖已保存為 {output_gantt}。")
 
     return average_waiting_time
 
 def srt_scheduling_with_gantt(csv_file_path='HW3.py', output_gantt='SRT_Gantt.png'):
-    # 从CSV文件加载进程数据
+    # 從CSV加載數據
     processes = pd.read_csv(csv_file_path)
-    # 确保数据类型是整型
+    # 改整數
     processes['burst_time'] = processes['burst_time'].astype(int)
     processes['arrival_time'] = processes['arrival_time'].astype(int)
     
@@ -159,17 +159,17 @@ def srt_scheduling_with_gantt(csv_file_path='HW3.py', output_gantt='SRT_Gantt.pn
     completed = [False] * n
 
     while any(not c for c in completed):
-        # 在当前时间，找到所有已到达且未完成的进程
+        # 在當前時間，找到所有已到達且未完成的行程
         valid_processes = [(i, row['PID'], row['burst_time'] - executed_time[i]) for i, row in processes.iterrows() if row['arrival_time'] <= time and not completed[i]]
         
         if not valid_processes:
             time += 1
             continue
 
-        # 选择剩余时间最短的进程
+        # 選擇剩餘時間最短的進程
         i, pid, remaining_time = min(valid_processes, key=lambda x: x[2])
         
-        # 执行这个进程一个时间单位
+        # 執行一個時間單位
         executed_time[i] += 1
         time += 1
         plt.barh(pid, 1, left=time-1, color=colors[i], edgecolor='black')
@@ -183,11 +183,11 @@ def srt_scheduling_with_gantt(csv_file_path='HW3.py', output_gantt='SRT_Gantt.pn
     plt.xlabel('Time')
     plt.ylabel('Processes')
     plt.title('SRT Scheduling Gantt Chart')
-    plt.yticks(processes.index + 1, processes['PID'])  # 修正了这里，以确保y轴标签正确显示
+    plt.yticks(processes.index + 1, processes['PID'])
     plt.grid(True, linestyle='--', linewidth=0.5)
     plt.tight_layout()
     plt.savefig(output_gantt)
-    print(f"SRT甘特图已保存为 {output_gantt}。")
+    print(f"SRT甘特圖已保存為 {output_gantt}。")
 
     return average_waiting_time
 

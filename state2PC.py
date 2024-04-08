@@ -2,7 +2,7 @@ import ctypes
 from ctypes import wintypes
 import csv
 import sys
-import psutil  # 导入psutil库
+import psutil
 
 # 定义所需的结构体和API
 class THREADENTRY32(ctypes.Structure):
@@ -42,7 +42,7 @@ CloseHandle = ctypes.windll.kernel32.CloseHandle
 
 TH32CS_SNAPTHREAD = 0x00000004
 
-# 尝试导入Cython编译的模块
+# 嘗試導入Cython模塊
 try:
     from GetThreadContext import get_thread_context
 except ImportError as e:
@@ -50,7 +50,7 @@ except ImportError as e:
     sys.exit(1)
 
 def get_process_memory_info():
-    """获取当前进程的记忆体使用信息"""
+    """或取當前進程的記憶體信息"""
     counters = PROCESS_MEMORY_COUNTERS()
     counters.cb = ctypes.sizeof(PROCESS_MEMORY_COUNTERS)
     process_handle = ctypes.windll.kernel32.GetCurrentProcess()
@@ -64,7 +64,7 @@ def get_process_memory_info():
         return None
 
 def collect_thread_info():
-    # 获取系统中所有线程的快照
+    # 獲取所有線程信息
     hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0)
 
     if hSnapshot != wintypes.HANDLE(-1):
@@ -80,10 +80,10 @@ def collect_thread_info():
                 while True:
                     try:
                         p = psutil.Process(entry.th32OwnerProcessID)
-                        process_state = p.status()  # 获取进程状态
-                        create_time = p.create_time()  # 直接使用UNIX时间戳
-                        memory_info = p.memory_info()
-                        memory_size = memory_info.rss  # 获取进程常驻集大小 (RSS)
+                        process_state = p.status()  # state of the process
+                        create_time = p.create_time()  # time of process creation
+                        memory_info = p.memory_info() # memory information
+                        memory_size = memory_info.rss  # memory size
                     except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                         process_state = "Unknown"
                         create_time = "Unknown"
@@ -91,11 +91,11 @@ def collect_thread_info():
                 
                     print(f"Process ID: {entry.th32OwnerProcessID}, Thread ID: {entry.th32ThreadID}, State: {process_state}")
                 
-                    # 获取寄存器和记忆体信息...
+                    # 獲取暫存器和記憶體信息
                     memory_info = get_process_memory_info()
                     context = get_thread_context(entry.th32ThreadID)
                 
-                    # 填充并写入CSV记录...
+                    # 填充
                     writer.writerow({
                         'Process ID': entry.th32OwnerProcessID, 
                         'Thread ID': entry.th32ThreadID, 
@@ -114,5 +114,5 @@ def collect_thread_info():
 
         CloseHandle(hSnapshot)
 
-# 调用函数
+# 調用函數
 #collect_thread_info()

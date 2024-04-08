@@ -19,11 +19,11 @@ class ProcessScheduler:
 
     def update_queues(self, simulation_df, process_df):
         for index, row in simulation_df.iterrows():
-            # 更新 Ready 队列
+            # 更新 Ready 
             if pd.isna(row['Ready']) or row['Ready'] == '':
                 self._update_queue_from_suspended(row, 'Ready', 'Ready Suspended', simulation_df, process_df, index)
 
-            # 更新 Waiting 队列
+            # 更新 Waiting 
             if pd.isna(row['Waiting']) or row['Waiting'] == '':
                 self._update_queue_from_suspended(row, 'Waiting', 'Waiting Suspended', simulation_df, process_df, index)
 
@@ -45,7 +45,7 @@ class ProcessScheduler:
         updated_simulation_df.to_csv(self.output_file, index=False)
         print(f"Updated simulation output has been saved to {self.output_file}")
 
-# 使用
+# 調用函數
 '''
 if __name__ == "__main__":
     scheduler = ProcessScheduler()
